@@ -37,7 +37,11 @@ fn main() {
             let nproc = Process::new(pid.as_u32(), **uid, process.cpu_usage(), process.memory() / BYTES_PER_MIB);
             procs.push(nproc);
         }
-    }
+        if procs.len() == 10 {
+            break;
+        }
+    }    
+    procs.sort_by(|a, b| b.mem.partial_cmp(&a.mem).unwrap());
     for p in procs {
         println!("{:?}", p);
     }
