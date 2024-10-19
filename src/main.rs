@@ -2,8 +2,7 @@ use sysinfo::System;
 
 const BYTES_PER_MIB: u64 = 1_048_576;
 
-#[derive(Debug)]
-struct Process {
+    struct Process {
     pid: u32,
     uid: u32,
     cpu: f32,
@@ -12,12 +11,7 @@ struct Process {
 
 impl Process {
     fn new(pid: u32, uid: u32, cpu: f32, mem: u64) -> Self {
-        Self {
-            pid,
-            uid,
-            cpu,
-            mem,
-        }
+        Self {pid, uid, cpu, mem }
     }
 }
 
@@ -32,17 +26,25 @@ fn main() {
     
     let mut procs: Vec<Process> = Vec::new();
     for (pid, process) in sys.processes() {
-        // Check if user_id is available
         if let Some(uid ) = process.user_id() {
-            let nproc = Process::new(pid.as_u32(), **uid, process.cpu_usage(), process.memory() / BYTES_PER_MIB);
-            procs.push(nproc);
+            let proc = Process::new(
+                pid.as_u32(),
+                **uid,
+                process.cpu_usage(),
+                process.memory() / BYTES_PER_MIB,
+            );
+            procs.push(proc);
         }
         if procs.len() == 10 {
             break;
         }
-    }    
+    }   
     procs.sort_by(|a, b| b.mem.partial_cmp(&a.mem).unwrap());
-    for p in procs {
-        println!("{:?}", p);
+    
+    for p in &procs {
+        println!(
+            "PID: {}, UID: {}, CPU: {}, Mem (MiB): {}",
+            p.pid, p.uid, p.cpu, p.mem
+        );
     }
 }
