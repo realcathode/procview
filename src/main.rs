@@ -20,7 +20,7 @@ fn main() {
     loop {    
         let mut sys = System::new_all();
         sys.refresh_all();
-    
+
         println!("Mem (MiB): {}", sys.total_memory() / BYTES_PER_MIB);
         println!("Used mem (MiB): {}", sys.used_memory() / BYTES_PER_MIB);
         println!("Swap (MiB): {}", sys.total_swap() / BYTES_PER_MIB);
@@ -41,8 +41,9 @@ fn main() {
                 break;
             }
         }   
-        procs.sort_by(|a, b| b.mem.partial_cmp(&a.mem).unwrap());
         
+        procs.sort_by(|a, b| b.mem.partial_cmp(&a.mem).unwrap_or(std::cmp::Ordering::Equal));
+
         for p in &procs {
             println!(
                 "PID: {}, UID: {}, CPU: {}, Mem (MiB): {}",
